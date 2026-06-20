@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil | Cupos Miranda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Urbanist:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --bg-dark: #0a0a0a; --bg-card: #141414; --bg-input: #1f1f1f; --primary: #CCFF00; --text-main: #ffffff; --text-muted: #8e8e93; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding: 100px 5%; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(20px); position: fixed; width: 100%; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.03); left:0;}
+        .logo { font-family: 'Urbanist', sans-serif; font-size: 24px; font-weight: 800; color: var(--text-main); text-decoration: none; }
+        .logo span { color: var(--primary); }
+        .nav-links a { color: var(--text-main); text-decoration: none; margin-left: 30px; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        
+        h1 { font-family: 'Urbanist', sans-serif; font-size: 2.5rem; text-align: center; margin-bottom: 20px; }
+        .dashboard-container { max-width: 800px; margin: 0 auto; }
+        
+        /* Estilos del Login */
+        .login-card { background: var(--bg-card); border-radius: 20px; padding: 40px; border: 1px solid rgba(255,255,255,0.05); max-width: 400px; margin: 50px auto; text-align: center; }
+        .login-card input { width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 10px; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; }
+        .login-card button { width: 100%; padding: 15px; background: var(--primary); color: #000; border: none; border-radius: 10px; font-weight: 800; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
+        .login-card button:hover { background: #b3e600; }
+
+        /* Estilos del Dashboard */
+        .viaje-card { background: var(--bg-card); border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); position: relative; }
+        .viaje-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 15px; padding-right: 40px; }
+        .viaje-header h3 { color: var(--primary); }
+        
+        .pasajero-item { display: flex; justify-content: space-between; align-items: center; background: #1f1f1f; padding: 15px; border-radius: 12px; margin-bottom: 10px; }
+        .p-nombre { font-weight: bold; font-size: 1.1rem; }
+        .p-ubi { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
+        .btn-mapa { background: var(--primary); color: #000; text-decoration: none; padding: 8px 15px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; }
+        
+        .btn-logout { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); padding: 8px 20px; border-radius: 10px; cursor: pointer; float: right; margin-bottom: 20px; margin-left: 10px; transition: 0.3s; }
+        .btn-logout:hover { border-color: white; color: white; }
+        
+        /* Botón Eliminar Viaje */
+        .btn-delete-viaje { position: absolute; top: 25px; right: 25px; background: transparent; border: none; color: #ff3b30; font-size: 1.2rem; cursor: pointer; transition: 0.3s; }
+        .btn-delete-viaje:hover { color: #ff453a; transform: scale(1.15); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">Cupos <span>Miranda</span></a>
+        <div class="nav-links">
+            <a href="index.html">Buscar Cupo</a>
+            <a href="publicar.html">Ofrecer Cupo</a>
+            <a href="perfil.html" class="active">Mi Perfil</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        
+        <div id="login-section" class="login-card">
+            <h2>Acceso Conductores</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.9rem;">Ingresa para ver tus rutas activas y pasajeros.</p>
+            <input type="text" id="login_nombre" placeholder="Tu Nombre">
+            <input type="number" id="login_cedula" placeholder="Tu Cédula">
+            <button onclick="iniciarSesion()">Ingresar</button>
+        </div>
+
+        <div id="dashboard-section" style="display: none;">
+            <button class="btn-logout" onclick="cerrarSesion()"><i class="fa-solid fa-right-from-bracket"></i> Salir</button>
+            <h1 style="clear: both; text-align: left; margin-bottom: 30px;">Mis <span style="color: var(--primary);">Viajes Activos</span></h1>
+            <div id="lista-mis-viajes">
+                </div>
+        </div>
+
+    </div>
+
+    <script>
+        window.onload = () => {
+            const conductorActivo = JSON.parse(sessionStorage.getItem('conductorSesion'));
+            if (conductorActivo) {
+                mostrarDashboard(conductorActivo.cedula);
+            }
+        };
+
+        function iniciarSesion() {
+            const nombre = document.getElementById('login_nombre').value.trim();
+            const cedula = document.getElementById('login_cedula').value.trim();
+
+            if (!nombre || !cedula) {
+                alert("Por favor ingresa tu nombre y cédula.");
+                return;
+            }
+
+            const datosSesion = { nombre: nombre, cedula: cedula };
+            sessionStorage.setItem('conductorSesion', JSON.stringify(datosSesion));
+            
+            mostrarDashboard(cedula);
+        }
+
+        function cerrarSesion() {
+            sessionStorage.removeItem('conductorSesion');
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('login_nombre').value = '';
+            document.getElementById('login_cedula').value = '';
+        }
+
+        function mostrarDashboard(cedulaConductor) {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('dashboard-section').style.display = 'block';
+
+            const contenedor = document.getElementById('lista-mis-viajes');
+            contenedor.innerHTML = ""; 
+            
+            let viajesGuardados = JSON.parse(localStorage.getItem('viajesCuposMiranda')) || [];
+            let misViajes = viajesGuardados.filter(viaje => viaje.cedula === cedulaConductor);
+
+            if(misViajes.length === 0) {
+                contenedor.innerHTML = "<p style='text-align:center; color:#888; padding: 40px;'>No tienes viajes publicados actualmente.</p>";
+                return;
+            }
+
+            misViajes.reverse().forEach(viaje => {
+                let htmlPasajeros = "";
+                
+                if(!viaje.pasajeros || viaje.pasajeros.length === 0) {
+                    htmlPasajeros = "<p style='color:#888; font-size:0.9rem;'>Aún no hay reservas en este viaje.</p>";
+                } else {
+                    viaje.pasajeros.forEach(p => {
+                        let linkBtn = p.ubicacion.includes("http") 
+                            ? `<a href="${p.ubicacion}" target="_blank" class="btn-mapa"><i class="fa-solid fa-map-location-dot"></i> Maps</a>`
+                            : `<span style="color:var(--primary);"><i class="fa-solid fa-thumbtack"></i> Dirección</span>`;
+
+                        htmlPasajeros += `
+                            <div class="pasajero-item">
+                                <div>
+                                    <div class="p-nombre"><i class="fa-solid fa-user-check"></i> ${p.nombre}</div>
+                                    <div class="p-ubi">${p.ubicacion} <span style="color:#555; font-size:0.8rem;">(${p.horaReserva})</span></div>
+                                </div>
+                                ${linkBtn}
+                            </div>
+                        `;
+                    });
+                }
+
+                contenedor.innerHTML += `
+                    <div class="viaje-card">
+                        <button class="btn-delete-viaje" onclick="eliminarViaje(${viaje.id})" title="Eliminar Publicación">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+
+                        <div class="viaje-header">
+                            <div>
+                                <h3>${viaje.origenDisplay} ➔ ${viaje.destino}</h3>
+                                <p style="color:#888; font-size:0.9rem;">${viaje.fecha} a las ${viaje.hora}</p>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="background: ${viaje.cupos > 0 ? 'var(--primary)' : '#555'}; color:#000; padding:5px 15px; border-radius:20px; font-weight:bold; font-size:0.85rem;">
+                                    ${viaje.cupos} Cupos Libres
+                                </span>
+                            </div>
+                        </div>
+                        <h4 style="font-size:0.9rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Lista de Pasajeros:</h4>
+                        <div style="margin-top:10px;">
+                            ${htmlPasajeros}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // FUNCIÓN ELIMINAR NUEVA
+        function eliminarViaje(idViaje) {
+            if(confirm("¿Estás seguro de que quieres eliminar esta publicación de viaje? Se borrará para siempre.")) {
+                let viajesGuardados = JSON.parse(localStorage.getItem('viajesCuposMiranda')) || [];
+                
+                // Filtramos dejando todos los viajes MENOS el que tiene el ID que queremos borrar
+                viajesGuardados = viajesGuardados.filter(viaje => viaje.id !== idViaje);
+                
+                // Guardamos la lista actualizada
+                localStorage.setItem('viajesCuposMiranda', JSON.stringify(viajesGuardados));
+                
+                // Refrescamos el panel
+                const conductorActivo = JSON.parse(sessionStorage.getItem('conductorSesion'));
+                mostrarDashboard(conductorActivo.cedula);
+            }
+        }
+    </script>
+</body>
+</html>

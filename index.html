@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cupos Miranda | Viajes Compartidos Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Urbanist:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-card: #141414;
+            --bg-input: #1f1f1f;
+            --primary: #CCFF00; 
+            --primary-hover: #b3e600;
+            --text-main: #ffffff;
+            --text-muted: #8e8e93;
+            --accent-orange: #ff9500;
+            --accent-green: #34c759;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding-bottom: 100px; overflow-x: hidden; }
+
+        /* --- NAVEGACIÓN --- */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(20px); position: fixed; width: 100%; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .logo { font-family: 'Urbanist', sans-serif; font-size: 24px; font-weight: 800; color: var(--text-main); text-decoration: none; }
+        .logo span { color: var(--primary); }
+        .nav-links a { color: var(--text-main); text-decoration: none; margin-left: 30px; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        .btn-login { background: transparent; border: 1px solid var(--primary); color: var(--primary) !important; padding: 8px 24px; border-radius: 50px; }
+
+        /* --- HERO --- */
+        .hero { padding: 160px 5% 60px; display: flex; flex-direction: column; align-items: center; text-align: center; background: radial-gradient(circle at top, rgba(204, 255, 0, 0.08) 0%, transparent 50%); }
+        .hero h1 { font-family: 'Urbanist', sans-serif; font-size: 3.8rem; max-width: 900px; margin-bottom: 15px; line-height: 1.1; font-weight: 800; }
+        .hero h1 span { color: var(--primary); }
+        .hero p { color: var(--text-muted); font-size: 1.2rem; margin-bottom: 40px; }
+
+        /* --- BUSCADOR --- */
+        .search-box { background: var(--bg-card); padding: 24px; border-radius: 24px; display: flex; gap: 15px; width: 100%; max-width: 1100px; box-shadow: 0 30px 60px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.03); flex-wrap: wrap; }
+        .input-group { flex: 1; min-width: 180px; display: flex; flex-direction: column; text-align: left; position: relative; }
+        .input-group label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; margin-left: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-group input, .input-group select { width: 100%; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.05); padding: 16px 16px 16px 45px; border-radius: 14px; color: var(--text-main); font-size: 0.95rem; outline: none; transition: 0.3s; }
+        .input-group input:focus, .input-group select:focus { border-color: var(--primary); background: #252525; }
+        .input-group i { position: absolute; left: 18px; top: 41px; color: var(--text-muted); font-size: 1.1rem; }
+        .btn-search { background: var(--primary); color: var(--bg-dark); border: none; border-radius: 14px; padding: 0 35px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 26px; height: 53px; }
+        .btn-search:hover { background: var(--primary-hover); }
+
+        /* --- SECCIÓN DE RESULTADOS --- */
+        .results-container { max-width: 1100px; margin: 40px auto 0; padding: 0 5%; }
+        .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+        .results-header h2 { font-size: 1.5rem; font-family: 'Urbanist', sans-serif; }
+        .results-header h2 span { color: var(--primary); }
+        .cards-grid { display: flex; flex-direction: column; gap: 20px; }
+
+        /* --- TARJETA DE VIAJE PREMIUM --- */
+        .trip-card { background: var(--bg-card); border-radius: 20px; padding: 24px; display: grid; grid-template-columns: 2fr 2fr 1fr; align-items: center; gap: 20px; border: 1px solid rgba(255,255,255,0.02); transition: 0.3s; }
+        .trip-card:hover { border-color: rgba(204, 255, 0, 0.2); transform: scale(1.01); }
+        .driver-info { display: flex; gap: 15px; align-items: center; }
+        .driver-avatar { width: 55px; height: 55px; background: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--primary); }
+        .driver-details h3 { font-size: 1.1rem; margin-bottom: 4px; font-weight: 600; }
+        .rating { color: #ffcc00; font-size: 0.85rem; display: flex; align-items: center; gap: 4px; }
+        .rating span { color: var(--text-muted); }
+        .route-details { display: flex; flex-direction: column; gap: 6px; }
+        .time { font-size: 1.2rem; font-weight: 700; }
+        
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; width: max-content; }
+        .badge-sur { background: rgba(0, 122, 255, 0.15); color: #30a2ff; }
+        .badge-norte { background: rgba(255, 69, 58, 0.15); color: #ff453a; }
+
+        .exact-address { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+        .exact-address i { color: var(--primary); margin-right: 5px; }
+
+        .booking-action { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+        .price { font-size: 1.6rem; font-weight: 800; color: var(--primary); }
+        .seats-left { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; }
+        .btn-book { background: var(--text-main); color: var(--bg-dark); border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; width: 100%; }
+        .btn-book:hover { background: var(--primary); }
+
+        /* --- MODAL DE CONFIRMACIÓN (DRAWER LATERAL) --- */
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s ease; }
+        .drawer { position: fixed; top: 0; right: -450px; width: 100%; max-width: 450px; height: 100%; background: var(--bg-card); border-left: 1px solid rgba(255,255,255,0.05); box-shadow: -10px 0 40px rgba(0,0,0,0.5); z-index: 1001; padding: 40px 30px; display: flex; flex-direction: column; transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .drawer.open { right: 0; }
+        .drawer-overlay.open { display: block; opacity: 1; }
+        .drawer-close { position: absolute; top: 30px; right: 30px; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
+        .drawer h3 { font-family: 'Urbanist', sans-serif; font-size: 1.8rem; margin-bottom: 20px; }
+        .drawer-trip-summary { background: var(--bg-dark); padding: 15px; border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.03); }
+        .drawer-input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .drawer-input-group label { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+        .drawer-input-group input { background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 10px; color: white; font-size: 1rem; outline: none; }
+        .drawer-input-group input:focus { border-color: var(--primary); }
+        .btn-confirm-booking { background: var(--primary); color: var(--bg-dark); border: none; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; width: 100%; margin-top: auto; }
+
+        @media (max-width: 768px) {
+            .trip-card { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+            .booking-action { align-items: center; width: 100%; }
+            .search-box { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+   <nav>
+        <a href="index.html" class="logo">Cupos <span>Miranda</span></a>
+        <div class="nav-links">
+            <a href="index.html" class="active">Buscar Cupo</a>
+            <a href="publicar.html">Ofrecer Cupo</a>
+            <a href="perfil.html">Mi Perfil</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Tu ruta inteligente <span>Cali</span> ⇄ <span>Miranda</span></h1>
+        <p>Logística inteligente adaptada al transporte intermunicipal local.</p>
+
+        <form class="search-box" onsubmit="event.preventDefault();">
+            <div class="input-group">
+                <label>Origen</label>
+                <i class="fa-solid fa-location-dot"></i>
+                <select id="origen" onchange="adaptarFormulario()">
+                    <option value="cali">Cali</option>
+                    <option value="miranda">Miranda</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label id="label-direccion">Dirección de destino </label>
+                <i class="fa-solid fa-map-pin"></i>
+                <input type="text" id="direccion" placeholder="Ej: Ciudad Jardín / Centro">
+            </div>
+
+            <div class="input-group" id="grupo-zona">
+                <label id="label-zona">Zona de Salida de Cali</label>
+                <i class="fa-solid fa-compass"></i>
+                <select id="zona">
+                    <option value="todos">Cualquier ruta (Norte/Sur)</option>
+                    <option value="sur" id="opcion-sur">Por el Sur (Autopista / Cl 5)</option>
+                    <option value="norte" id="opcion-norte">Por el Norte (Terminal / Vía Rápida)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Fecha</label>
+                <i class="fa-regular fa-calendar"></i>
+                <input type="date" id="fecha">
+            </div>
+
+            <button type="submit" class="btn-search">Filtrar Cupos</button>
+        </form>
+    </header>
+
+    <main class="results-container">
+        <div class="results-header">
+            <h2 id="titulo-resultados">Viajes saliendo de <span>Cali</span></h2>
+            <p style="color: var(--text-muted);" id="contador-viajes">0 conductores disponibles</p>
+        </div>
+
+        <div class="cards-grid" id="contenedor-viajes-lista">
+            </div>
+    </main>
+
+    <div class="drawer-overlay" id="overlay" onclick="closeDrawer()"></div>
+<div id="bookingDrawer" class="drawer">
+        <button class="close-drawer" onclick="closeDrawer()"><i class="fa-solid fa-xmark"></i></button>
+        <h2 style="font-family: 'Urbanist', sans-serif; margin-bottom: 20px;">Confirmar Cupo</h2>
+        
+        <div class="booking-summary" style="background: var(--bg-input); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+            <p id="summary-driver" style="font-weight: 600; margin-bottom: 5px;">Conductor: </p>
+            <p id="summary-route" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 5px;">Ruta: </p>
+            <p id="summary-price" style="color: var(--primary); font-weight: 700;">Valor: </p>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Tu Nombre</label>
+            <input type="text" id="input-passenger-name" placeholder="Ej: María Gómez" style="width: 100%; padding: 12px; border-radius: 10px; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+        </div>
+
+        <div style="margin-bottom: 25px;">
+            <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 8px;">¿Dónde te recoge?</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="input-pickup-exacto" placeholder="Escribe la dirección o usa el GPS" style="flex: 1; padding: 12px; border-radius: 10px; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;">
+                <button type="button" onclick="obtenerUbicacionGPS()" style="background: var(--bg-input); border: 1px solid var(--primary); color: var(--primary); padding: 0 15px; border-radius: 10px; cursor: pointer; transition: 0.3s;" title="Usar mi ubicación actual">
+                    <i class="fa-solid fa-location-crosshairs"></i> GPS
+                </button>
+            </div>
+            <p id="gps-status" style="font-size: 0.8rem; color: var(--primary); margin-top: 5px; display: none;">Obteniendo ubicación...</p>
+        </div>
+
+        <button class="btn-confirm-booking" id="btn-confirm-action" onclick="finalizarReserva()">Confirmar y Enviar WhatsApp</button>
+    </div>
+
+   <script src="app.js"></script>
+</body>
+</html>

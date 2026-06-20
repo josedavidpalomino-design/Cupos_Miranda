@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ofrecer Cupo | Cupos Miranda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Urbanist:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ... (Mantén exactamente el mismo CSS de antes, no hay cambios en el diseño visual) ... */
+        :root { --bg-dark: #0a0a0a; --bg-card: #141414; --bg-input: #1f1f1f; --primary: #CCFF00; --primary-hover: #b3e600; --text-main: #ffffff; --text-muted: #8e8e93; --success: #34c759; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding-bottom: 100px; background-image: radial-gradient(circle at 80% 20%, rgba(204, 255, 0, 0.05) 0%, transparent 40%); }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(20px); position: fixed; width: 100%; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .logo { font-family: 'Urbanist', sans-serif; font-size: 24px; font-weight: 800; color: var(--text-main); text-decoration: none; }
+        .logo span { color: var(--primary); }
+        .nav-links a { color: var(--text-main); text-decoration: none; margin-left: 30px; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+        .btn-login { background: transparent; border: 1px solid var(--primary); color: var(--primary) !important; padding: 8px 24px; border-radius: 50px; }
+        .publish-header { padding: 140px 5% 40px; text-align: center; }
+        .publish-header h1 { font-family: 'Urbanist', sans-serif; font-size: 3rem; margin-bottom: 15px; }
+        .publish-header h1 span { color: var(--primary); }
+        .publish-header p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        .form-container { max-width: 800px; margin: 0 auto; padding: 0 5%; }
+        .publish-card { background: var(--bg-card); border-radius: 24px; padding: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .full-width { grid-column: 1 / -1; }
+        .input-group { display: flex; flex-direction: column; position: relative; }
+        .input-group label { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.05); padding: 16px 16px 16px 45px; border-radius: 14px; color: var(--text-main); font-size: 1rem; outline: none; transition: 0.3s; }
+        .input-group textarea { padding-left: 16px; min-height: 100px; resize: vertical; }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: var(--primary); background: #252525; }
+        .input-group i { position: absolute; left: 18px; top: 41px; color: var(--text-muted); font-size: 1.1rem; }
+        .input-group.no-icon textarea { padding-left: 16px; }
+        .section-divider { grid-column: 1 / -1; height: 1px; background: rgba(255,255,255,0.05); margin: 10px 0; display: flex; align-items: center; justify-content: center; }
+        .section-divider span { background: var(--bg-card); padding: 0 15px; color: var(--primary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; }
+        .btn-submit { grid-column: 1 / -1; background: var(--primary); color: var(--bg-dark); border: none; border-radius: 14px; padding: 18px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-submit:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(204, 255, 0, 0.2); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 1000; display: none; place-items: center; }
+        .modal-content { background: var(--bg-card); padding: 40px; border-radius: 24px; text-align: center; max-width: 400px; border: 1px solid rgba(52, 199, 89, 0.3); }
+        .modal-content i { font-size: 4rem; color: var(--success); margin-bottom: 20px; }
+        .modal-content h3 { font-size: 1.5rem; margin-bottom: 10px; font-family: 'Urbanist', sans-serif; }
+        .modal-content p { color: var(--text-muted); margin-bottom: 25px; }
+        .btn-modal { background: var(--text-main); color: var(--bg-dark); padding: 12px 30px; border-radius: 12px; font-weight: 700; text-decoration: none; display: inline-block; }
+        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .publish-card { padding: 25px; } }
+    </style>
+</head>
+<body>
+<nav>
+        <a href="index.html" class="logo">Cupos <span>Miranda</span></a>
+        <div class="nav-links">
+            <a href="index.html">Buscar Cupo</a>
+            <a href="publicar.html" class="active">Ofrecer Cupo</a>
+            <a href="perfil.html">Mi Perfil</a>
+        </div>
+    </nav>
+
+    <header class="publish-header">
+        <h1>Publica tu <span>Ruta</span></h1>
+        <p>Comparte tu viaje, reduce gastos de combustible y ayuda a otros a llegar seguros a su destino.</p>
+    </header>
+
+    <main class="form-container">
+        <form class="publish-card" onsubmit="publicarViaje(event)">
+            <div class="form-grid">
+                
+                <div class="input-group full-width">
+                    <label>Nombre del Conductor</label>
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="conductor_nombre" placeholder="Ej: Carlos Mendoza" required>
+                </div>
+                <div class="input-group">
+                    <label>Número de Cédula</label>
+                    <i class="fa-solid fa-id-card"></i>
+                    <input type="number" id="conductor_cedula" placeholder="Ej: 111222333" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Ciudad / Municipio de Salida</label>
+                    <i class="fa-solid fa-location-dot"></i>
+                    <input type="text" id="origen" placeholder="Ej: Cali, Miranda, Palmira..." required>
+                </div>
+
+                <div class="input-group">
+                    <label>Ciudad / Municipio de Destino</label>
+                    <i class="fa-solid fa-flag-checkered"></i>
+                    <input type="text" id="destino" placeholder="Ej: Miranda, Cali, Buga..." required>
+                </div>
+
+                <div class="input-group full-width">
+                    <label>Ruta principal / Puntos de ingreso o salida</label>
+                    <i class="fa-solid fa-compass"></i>
+                    <input type="text" id="ruta_detalle" placeholder="Ej: Salgo por el Sur (Calle 5ta) / Llego a Cali por el Norte..." required>
+                </div>
+
+                <div class="section-divider"><span>Detalles del Viaje</span></div>
+
+                <div class="input-group">
+                    <label>Fecha del Viaje</label>
+                    <i class="fa-regular fa-calendar"></i>
+                    <input type="date" id="fecha" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Hora de Salida</label>
+                    <i class="fa-regular fa-clock"></i>
+                    <input type="time" id="hora" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Cupos Disponibles</label>
+                    <i class="fa-solid fa-users"></i>
+                    <select id="cupos" required>
+                        <option value="1">1 Puesto libre</option>
+                        <option value="2">2 Puestos libres</option>
+                        <option value="3">3 Puestos libres</option>
+                        <option value="4" selected>4 Puestos libres</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Precio por Puesto ($)</label>
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                    <input type="number" id="precio" placeholder="Ej: 12000" min="5000" step="1000" required>
+                </div>
+
+                <div class="section-divider"><span>Vehículo y Contacto</span></div>
+
+                <div class="input-group full-width">
+                    <label>Teléfono de Contacto (WhatsApp)</label>
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <input type="tel" id="telefono" placeholder="Ej: 300 123 4567" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Vehículo (Marca y Color)</label>
+                    <i class="fa-solid fa-car"></i>
+                    <input type="text" id="vehiculo" placeholder="Ej: Chevrolet Spark Plateado" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Placa</label>
+                    <i class="fa-solid fa-hashtag"></i>
+                    <input type="text" id="placa" placeholder="Ej: ABC-123" required>
+                </div>
+
+                <div class="input-group full-width no-icon">
+                    <label>Notas adicionales para el pasajero (Opcional)</label>
+                    <textarea id="notas" placeholder="Ej: No llevo mascotas. En Miranda empiezo a recoger desde el Parque Principal..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fa-solid fa-paper-plane"></i> Publicar Viaje
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <i class="fa-solid fa-circle-check"></i>
+            <h3>¡Viaje Publicado!</h3>
+            <p>Tu ruta ya está visible para los pasajeros. Durará 24 horas activa.</p>
+            <a href="index.html" class="btn-modal">Ver mi publicación</a>
+        </div>
+    </div>
+
+   <script src="publicar.js"></script>
+</body>
+</html>
