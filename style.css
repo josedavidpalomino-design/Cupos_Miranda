@@ -1,0 +1,22 @@
+/* --- AJUSTES PARA PANTALLAS DE CELULAR --- */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column; /* Pone el logo arriba y los links abajo */
+                padding: 15px 5%;
+                gap: 15px;
+            }
+            .nav-links {
+                display: flex;
+                width: 100%;
+                justify-content: space-between; /* Distribuye los 3 botones uniformemente */
+            }
+            .nav-links a {
+                margin-left: 0; /* Quitamos el margen gigante */
+                font-size: 0.85rem; /* Letra un poco más pequeña */
+                text-align: center;
+                padding: 6px 10px; /* Damos un respiro al toque del dedo */
+            }
+            body { 
+                padding-top: 130px; /* Bajamos el contenido para que el nuevo menú no lo tape */
+            }
+        }
