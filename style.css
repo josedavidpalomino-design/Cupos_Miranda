@@ -20,3 +20,26 @@
                 padding-top: 130px; /* Bajamos el contenido para que el nuevo menú no lo tape */
             }
         }
+        /* --- BOTONES DE FILTRO (NUEVOS) --- */
+.btn-filtro {
+    background: var(--bg-input);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: 0.3s;
+    white-space: nowrap; /* Evita que el texto se rompa en 2 líneas */
+}
+.btn-filtro:hover {
+    color: white;
+    border-color: rgba(255,255,255,0.3);
+}
+.btn-filtro.active {
+    background: var(--primary);
+    color: #000;
+    font-weight: 700;
+    border: none;
+}

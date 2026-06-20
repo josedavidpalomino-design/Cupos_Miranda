@@ -9,18 +9,20 @@ function publicarViaje(event) {
     // Convertimos a minúsculas y quitamos espacios extra para evitar errores de búsqueda
     const origenLimpio = document.getElementById('origen').value.toLowerCase().trim();
 
-    const nuevoViaje = {
+const nuevoViaje = {
         id: Date.now(), 
         createdAt: Date.now(), 
+        tipoServicio: document.getElementById('tipo_servicio').value,
         conductor: document.getElementById('conductor_nombre').value.trim(),
-        cedula: document.getElementById('conductor_cedula').value.trim(), // ¡NUEVO! Guardamos la cédula
+        cedula: document.getElementById('conductor_cedula').value.trim(), 
         origen: origenLimpio, 
         origenDisplay: document.getElementById('origen').value.trim(), 
         destino: document.getElementById('destino').value.trim(),
         infoRuta: document.getElementById('ruta_detalle').value.trim(),
         fecha: document.getElementById('fecha').value,
         hora: document.getElementById('hora').value,
-        cupos: parseInt(document.getElementById('cupos').value),
+        // ¡NUEVO! Guardamos el texto libre tal cual:
+        cupos: document.getElementById('cupos').value.trim(), 
         precio: document.getElementById('precio').value,
         telefono: document.getElementById('telefono').value,
         rating: "Nuevo",

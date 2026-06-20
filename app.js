@@ -16,33 +16,104 @@ function adaptarFormulario() {
     tituloResultados.innerHTML = origenInput === 'miranda' ? "Viajes saliendo de <span>Miranda</span>" : "Viajes saliendo de <span>Cali</span>";
     renderizarViajes(origenInput);
 }
-function renderizarViajes(origenFiltrado) {
+// Agrega esta variable al principio de app.js junto a let viajesReales = [];
+let filtroServicioActual = 'todos'; 
+
+// Esta función se llama al hacer clic en los botones de filtro
+window.filtrarPorServicio = function(tipo, botonHtml) {
+    filtroServicioActual = tipo;
+    
+    // Cambiar estilos de los botones (poner activo el seleccionado)
+    document.querySelectorAll('.btn-filtro').forEach(btn => btn.classList.remove('active'));
+    if(botonHtml) botonHtml.classList.add('active');
+    
+    // Volver a renderizar
+    adaptarFormulario(); 
+}
+
+// Reemplaza tu función renderizarViajes completa por esta:
+// Función que se activa con el botón amarillo
+function buscarAvanzado() {
+    renderizarViajes();
+}
+
+window.filtrarPorServicio = function(tipo, botonHtml) {
+    filtroServicioActual = tipo;
+    document.querySelectorAll('.btn-filtro').forEach(btn => btn.classList.remove('active'));
+    if(botonHtml) botonHtml.classList.add('active');
+    renderizarViajes(); 
+}
+
+function renderizarViajes() {
     const lista = document.getElementById('contenedor-viajes-lista');
     const contador = document.getElementById('contador-viajes');
     lista.innerHTML = "";
     
-    // Limpiamos la palabra clave para la búsqueda
-    const filtroLimpio = origenFiltrado.toLowerCase().trim();
+    // Capturamos lo que escribieron en los 4 cuadros (si existen)
+    const valOrigen = document.getElementById('filtro_origen') ? document.getElementById('filtro_origen').value.toLowerCase().trim() : '';
+    const valDestino = document.getElementById('filtro_destino') ? document.getElementById('filtro_destino').value.toLowerCase().trim() : '';
+    const valZona = document.getElementById('filtro_zona') ? document.getElementById('filtro_zona').value.toLowerCase().trim() : '';
+    const valFecha = document.getElementById('filtro_fecha') ? document.getElementById('filtro_fecha').value : '';
     
-    // Filtramos los viajes (Si no hay filtro, mostramos todos)
+    // Filtramos
     const filtrados = viajesReales.filter(v => {
-        if (!filtroLimpio) return true;
-        return v.origen.includes(filtroLimpio);
+        // Verifica si lo escrito coincide con los datos del viaje (si el cuadro está vacío, lo pasa como válido)
+        const matchOrigen = !valOrigen || v.origen.toLowerCase().includes(valOrigen) || v.origenDisplay.toLowerCase().includes(valOrigen);
+        const matchDestino = !valDestino || v.destino.toLowerCase().includes(valDestino);
+        // La zona la comparamos con la info de la ruta que da el conductor
+        const matchZona = !valZona || v.infoRuta.toLowerCase().includes(valZona);
+        const matchFecha = !valFecha || v.fecha === valFecha;
+
+        // Filtro de los botones redondos (Viajes, Encomiendas, etc.)
+        const tipoV = v.tipoServicio || 'viaje'; 
+        let coincideServicio = false;
+        if (filtroServicioActual === 'todos') {
+            coincideServicio = true;
+        } else if (filtroServicioActual === 'viaje') {
+            coincideServicio = (tipoV === 'viaje' || tipoV === 'viaje_encomienda');
+        } else if (filtroServicioActual === 'encomienda') {
+            coincideServicio = (tipoV === 'encomienda' || tipoV === 'viaje_encomienda');
+        } else {
+            coincideServicio = (tipoV === filtroServicioActual); 
+        }
+        
+        return matchOrigen && matchDestino && matchZona && matchFecha && coincideServicio;
     });
     
-    contador.innerText = `${filtrados.length} conductores disponibles`;
+    contador.innerText = `${filtrados.length} servicios disponibles`;
 
     if (filtrados.length === 0) {
-        lista.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 40px 0;">No hay viajes publicados desde este origen en las últimas 24 horas.</p>`;
+        lista.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 40px 0;">No hay servicios que coincidan con tu búsqueda.</p>`;
         return;
     }
 
     filtrados.forEach(viaje => {
         const cuposLibres = viaje.cupos;
-        const estaAgotado = cuposLibres <= 0;
+        const estaAgotado = (cuposLibres === 0 || cuposLibres === "0"); 
+        
         const botonHTML = estaAgotado 
             ? `<button class="btn-book" style="background: #333; color: #888; cursor: not-allowed;">Agotado</button>`
             : `<button class="btn-book" onclick="openDrawer(${viaje.id}, '${viaje.conductor}', '${viaje.infoRuta}', ${viaje.precio}, '${viaje.telefono}')">Reservar</button>`;
+
+        let tipoBadge = '';
+        let textoCupos = '';
+
+        if (viaje.tipoServicio === 'encomienda') {
+            tipoBadge = `<span class="badge" style="background: rgba(255, 165, 0, 0.15); color: orange;">📦 Solo Encomiendas</span>`;
+            textoCupos = `Espacio: ${cuposLibres}`;
+        } else if (viaje.tipoServicio === 'particular') {
+            tipoBadge = `<span class="badge" style="background: rgba(0, 255, 255, 0.15); color: cyan;">⭐ Particular Exclusivo</span>`;
+            textoCupos = `Servicio Privado`; 
+        } else if (viaje.tipoServicio === 'viaje_encomienda') {
+            tipoBadge = `
+                <span class="badge" style="background: rgba(204, 255, 0, 0.15); color: var(--primary); margin-right: 5px;">🚗 Pasajeros</span>
+                <span class="badge" style="background: rgba(255, 165, 0, 0.15); color: orange;">📦 Encomiendas</span>
+            `;
+            textoCupos = `Disp: ${cuposLibres}`;
+        } else {
+            tipoBadge = `<span class="badge" style="background: rgba(204, 255, 0, 0.15); color: var(--primary);">🚗 Ruta de Pasajeros</span>`;
+            textoCupos = `${cuposLibres} libres`;
+        }
 
         lista.innerHTML += `
             <div class="trip-card" ${estaAgotado ? 'style="opacity: 0.6;"' : ''}>
@@ -55,12 +126,12 @@ function renderizarViajes(origenFiltrado) {
                 </div>
                 <div class="route-details">
                     <div class="time"><i class="fa-regular fa-clock" style="font-size:1rem; margin-right:5px; color:var(--primary);"></i> ${viaje.hora} - ${viaje.fecha}</div>
-                    <span class="badge" style="background: rgba(204, 255, 0, 0.15); color: var(--primary);">Ruta</span>
+                    <div style="margin-bottom: 8px;">${tipoBadge}</div>
                     <div class="exact-address"><i class="fa-solid fa-route"></i>${viaje.infoRuta}</div>
                 </div>
                 <div class="booking-action">
                     <div class="price">$${Number(viaje.precio).toLocaleString()}</div>
-                    <div class="seats-left" style="color: ${estaAgotado ? 'red' : 'var(--text-muted)'};">${cuposLibres} puestos libres</div>
+                    <div class="seats-left" style="color: ${estaAgotado ? 'red' : 'var(--text-muted)'};">${textoCupos}</div>
                     ${botonHTML}
                 </div>
             </div>

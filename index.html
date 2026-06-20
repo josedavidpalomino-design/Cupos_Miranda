@@ -116,49 +116,65 @@
         <h1>Tu ruta inteligente <span>Cali</span> ⇄ <span>Miranda</span></h1>
         <p>Logística inteligente adaptada al transporte intermunicipal local.</p>
 
-        <form class="search-box" onsubmit="event.preventDefault();">
-            <div class="input-group">
-                <label>Origen</label>
-                <i class="fa-solid fa-location-dot"></i>
-                <select id="origen" onchange="adaptarFormulario()">
-                    <option value="cali">Cali</option>
-                    <option value="miranda">Miranda</option>
-                </select>
+        <div style="background: var(--bg-card); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 20px;">
+            
+            <div style="flex: 1; min-width: 150px;">
+                <label style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; display: block; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Origen</label>
+                <div style="position: relative;">
+                    <i class="fa-solid fa-location-dot" style="position: absolute; left: 15px; top: 15px; color: var(--text-muted);"></i>
+                    <input type="text" id="filtro_origen" placeholder="Ej: Cali" style="width: 100%; padding: 13px 15px 13px 40px; border-radius: 10px; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-size: 0.9rem;">
+                </div>
             </div>
 
-            <div class="input-group">
-                <label id="label-direccion">Dirección de destino </label>
-                <i class="fa-solid fa-map-pin"></i>
-                <input type="text" id="direccion" placeholder="Ej: Ciudad Jardín / Centro">
+            <div style="flex: 1; min-width: 150px;">
+                <label style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; display: block; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Dirección de Destino</label>
+                <div style="position: relative;">
+                    <i class="fa-solid fa-map-pin" style="position: absolute; left: 15px; top: 15px; color: var(--text-muted);"></i>
+                    <input type="text" id="filtro_destino" placeholder="Ej: Ciudad Jardín / Centro" style="width: 100%; padding: 13px 15px 13px 40px; border-radius: 10px; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-size: 0.9rem;">
+                </div>
             </div>
 
-            <div class="input-group" id="grupo-zona">
-                <label id="label-zona">Zona de Salida de Cali</label>
-                <i class="fa-solid fa-compass"></i>
-                <select id="zona">
-                    <option value="todos">Cualquier ruta (Norte/Sur)</option>
-                    <option value="sur" id="opcion-sur">Por el Sur (Autopista / Cl 5)</option>
-                    <option value="norte" id="opcion-norte">Por el Norte (Terminal / Vía Rápida)</option>
-                </select>
+            <div style="flex: 1; min-width: 150px;">
+                <label style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; display: block; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Zona de Salida de Cali</label>
+                <div style="position: relative;">
+                    <i class="fa-regular fa-compass" style="position: absolute; left: 15px; top: 15px; color: var(--text-muted);"></i>
+                    <input type="text" id="filtro_zona" placeholder="Ej: Norte, Sur..." style="width: 100%; padding: 13px 15px 13px 40px; border-radius: 10px; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-size: 0.9rem;">
+                </div>
             </div>
 
-            <div class="input-group">
-                <label>Fecha</label>
-                <i class="fa-regular fa-calendar"></i>
-                <input type="date" id="fecha">
+            <div style="flex: 1; min-width: 150px;">
+                <label style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 8px; display: block; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Fecha</label>
+                <div style="position: relative;">
+                    <i class="fa-regular fa-calendar" style="position: absolute; left: 15px; top: 15px; color: var(--text-muted);"></i>
+                    <input type="date" id="filtro_fecha" style="width: 100%; padding: 12px 15px 12px 40px; border-radius: 10px; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-size: 0.9rem; font-family: inherit; color-scheme: dark;">
+                </div>
             </div>
 
-            <button type="submit" class="btn-search">Filtrar Cupos</button>
-        </form>
+            <button onclick="buscarAvanzado()" style="background: var(--primary); color: #000; border: none; padding: 14px 25px; border-radius: 10px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; height: 44px; white-space: nowrap;">
+                Filtrar Cupos
+            </button>
+        </div>
     </header>
 
     <main class="results-container">
         <div class="results-header">
             <h2 id="titulo-resultados">Viajes saliendo de <span>Cali</span></h2>
-            <p style="color: var(--text-muted);" id="contador-viajes">0 conductores disponibles</p>
+          <div id="contador-viajes" style="margin-top: 30px; font-weight: 600; color: var(--primary);">0 servicios disponibles</div>
+        
+   <div class="input-group" style="grid-column: 1 / -1;">
+                    <label>¿Qué tipo de servicio ofreces?</label>
+                    <i class="fa-solid fa-list-check"></i>
+                    <select id="tipo_servicio" required style="width: 100%; padding: 15px 15px 15px 45px; border-radius: 12px; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-size: 1rem; appearance: none;">
+                        <option value="viaje">🚗 Solo Viaje (Pasajeros)</option>
+                        <option value="viaje_encomienda">🚗 + 📦 Viaje y Encomiendas</option>
+                        <option value="encomienda">📦 Solo Encomiendas</option>
+                        <option value="particular">⭐ Servicio Particular Exclusivo</option>
+                    </select>
+                </div>
         </div>
 
         <div class="cards-grid" id="contenedor-viajes-lista">
+            <div id="contador-viajes" style="margin-top: 30px; font-weight: 600; color: var(--primary);">0 servicios disponibles</div>
             </div>
     </main>
 

@@ -76,6 +76,16 @@
                     <i class="fa-solid fa-id-card"></i>
                     <input type="number" id="conductor_cedula" placeholder="Ej: 111222333" required>
                 </div>
+                <div class="input-group" style="grid-column: 1 / -1;">
+                    <label>¿Qué tipo de servicio ofreces?</label>
+                    <i class="fa-solid fa-list-check"></i>
+                    <select id="tipo_servicio" required style="width: 100%; padding: 15px 15px 15px 45px; border-radius: 12px; background: var(--bg-dark); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; font-size: 1rem; appearance: none;">
+                        <option value="viaje">🚗 Viaje Normal (Pasajeros)</option>
+                        <option value="viaje_encomienda">🚗 + 📦 Viaje y Encomiendas</option>
+                        <option value="encomienda">📦 Llevar o Traer Encomienda</option>
+                        <option value="particular">⭐ Servicio Particular / Por Horas</option>
+                    </select>
+                </div>
 
                 <div class="input-group">
                     <label>Ciudad / Municipio de Salida</label>
